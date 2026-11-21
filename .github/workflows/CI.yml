@@ -1,7 +1,12 @@
-name: My CI Pipeline
+
+name: IAM CI Pipeline
 
 on:
   push:
+    branches:
+      - main
+
+  pull_request:
     branches:
       - main
 
@@ -10,11 +15,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout source code
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Step 2: Display message
       - name: Display message
         run: echo "Hello YAML"
 
+      # Step 3: Install Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Step 4: Check Terraform version
       - name: Check Terraform
         run: terraform --version
+
+      # Step 5: Format Terraform files
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+
+      # Step 6: Initialize Terraform
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      # Step 7: Validate Terraform
+      - name: Terraform Validate
+        run: terraform validate
